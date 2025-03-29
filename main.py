@@ -66,9 +66,9 @@ class Player:
         if testRng > missPercent:
             hitRng = rangeRNG(lowest, highest)
             damage = hitRng + minionDamage
-            finalDamage = damage - opposingPlayer.shieldDamage
+            finalDamage = damage
             if opposingPlayer.shieldActive:
-                finalDamage = damage / self.shieldDamage
+                finalDamage = finalDamage / self.shieldDamage
             opposingPlayer.health -= finalDamage
             print(f"\nThat's a hit! {hitRng} damage.\n")
             if self.minionActive:
@@ -78,7 +78,6 @@ class Player:
             if opposingPlayer.shieldActive:
                 print(f"{opposingPlayer.name}'s {opposingPlayer.shieldName} blocked {damage - finalDamage} damage.")
             print("\n")
-            print("\nThat's a miss!\n\n")
             return 1
     
     def heal(self):
@@ -137,16 +136,16 @@ def turn(player1: Player, player2: Player):
     print(f"\n{getDivider()}\n")
     print(f"Current Turn: {player1.name}\n{player1.name}'s Health: {player1.health}\n{player2.name}'s Health: {player2.health}\n")
     attacks = player1.getList(player2)
-    print("\nAttacks:\n")
+    print("Attacks:")
     index = 0
     for i in attacks:
-        print(f"{index + 1}. {i}\n")
+        print(f"{index + 1}. {i}")
         index += 1
-    print(f"\nHealing Potions left: {player1.healingPotions}\n")
+    print(f"\n{player1.HealingPotionsName}s left: {player1.healingPotions}\n")
     print(f"{player1.shieldName}s left: {player1.shields}")
-    print(f"\nShields divide damage by {player1.shieldDamage}. They last for 2 of your turns.\n")
-    print(f"Available {player1.minionName}s: {player1.minions}\n{player1.minionName}s add a random damage boost (potentially double) but lower your chances of hitting. They last for {player1.minionMaxTurns} of your turns.\n")
-    print(f"{player1.minionName} Active?: ")
+    print(f"{player1.shieldName}s divide damage by {player1.shieldDamage}. They last for 2 of your turns.")
+    print(f"\nAvailable {player1.minionName}s: {player1.minions}\n{player1.minionName}s add a random damage boost (potentially double) but lower your chances of hitting. They last for {player1.minionMaxTurns} of your turns.")
+    print(f"\n{player1.minionName} Active?: ")
 
     if player1.minionActive:
         print("Yes\n")
@@ -162,40 +161,31 @@ def turn(player1: Player, player2: Player):
 
     print(f"\n{getDivider()}\n")
     print("Type the name of your attack.\n")
-    x = ""
-    print("> ")
     while True:
-        input(x)
+        x = input("> ")
         try:
             attak = attacks[x]()
             if attak == 2:
                 print("Your health is already at max!\n")
-                print("> ")
             elif attak == 3:
                 print(f"You don't have any {player1.HealingPotionsName}s!\n")
-                print("> ")
             elif attak == 4:
                 print(f"You don't have any {player1.minionName}s left!")
-                print("> ")
             elif attak == 5:
                 print(f"You already have a {player1.minionName} active!")
-                print("> ")
             elif attak == 6:
                 print(f"You don't have any {player1.shieldName}s left!")
-                print("> ")
             elif attak == 7:
                 print(f"You already have a {player1.shieldName} active!")
-                print("> ")
             else:
                 break
         except:
             print(f"Attack \"{x}\" not found!\n")
-            print("> ")
 
 def start(player1: Player, player2: Player):
     print(f"Made with BattleEngine v{version} by CombineSoldier14\n")
     print(f"{getDivider()}\n")
-    print(f"The battle has begun!\n {player1.name} vs {player2.name}\n\n")
+    print(f"The battle has begun!\n {player1.name} vs {player2.name}")
     while player1.health > 0 and player2.health > 0:
         turn(player1, player2)
         if player2.health <= 0:

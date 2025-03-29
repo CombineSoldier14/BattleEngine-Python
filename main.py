@@ -1,13 +1,15 @@
 import json
 import random
 
-with open ('data.json') as file:
+version = "1.4.0"
+
+with open ('settings.json') as file:
     data = json.load(file)
 
 def getDivider():
     divider = ""
     for i in range(56):
-        divider += data["divider"]
+        divider += data["DIVIDER"]
     return divider
 
 def rangeRNG(lowest: int, highest: int):
@@ -29,7 +31,7 @@ class Player:
     shieldDamage: int
     shieldName: str
     minionName: str
-    def __init__(self, name: str, health: int, max_health: int, healingPotions: int, HealingPotionsName: str, minionActive: int, minions: int, minionTurns: int, minionMaxTurns: int, shieldActive: int, shields: int, shieldTurns: int, shieldDamage: int, shieldName: str, minionName: str):
+    def __init__(self, name: str, health: int, max_health: int, healingPotions: int, HealingPotionsName: str, minionActive: int, minions: int, minionTurns: int, minionMaxTurns: int, shieldActive: int, shields: int, shieldTurns: int, shieldMaxTurns: int, shieldDamage: int, shieldName: str, minionName: str):
         self.name = name
         self.health = health
         self.max_health = max_health
@@ -42,6 +44,7 @@ class Player:
         self.shieldActive = shieldActive
         self.shields = shields
         self.shieldTurns = shieldTurns
+        self.shieldMaxTurns = shieldMaxTurns
         self.shieldDamage = shieldDamage
         self.shieldName = shieldName
         self.minionName = minionName
@@ -127,7 +130,7 @@ class Player:
         attacks[f"Use {self.shieldName}"] = self.shield
         return attacks
 
-def finish(winningPlayer: Player, losingPlayer: Player):
+def finish(winningPlayer: Player):
     print(f"\n{winningPlayer.name} has won the battle with {winningPlayer.health} health!\n")
 
 def turn(player1: Player, player2: Player):
@@ -177,6 +180,69 @@ def turn(player1: Player, player2: Player):
             elif attak == 5:
                 print(f"You already have a {player1.minionName} active!")
                 print("> ")
+            elif attak == 6:
+                print(f"You don't have any {player1.shieldName}s left!")
+                print("> ")
+            elif attak == 7:
+                print(f"You already have a {player1.shieldName} active!")
+                print("> ")
+            else:
+                break
         except:
             print(f"Attack \"{x}\" not found!\n")
             print("> ")
+
+def start(player1: Player, player2: Player):
+    print(f"Made with BattleEngine v{version} by CombineSoldier14\n")
+    print(f"{getDivider()}\n")
+    print(f"The battle has begun!\n {player1.name} vs {player2.name}\n\n")
+    while player1.health > 0 and player2.health > 0:
+        turn(player1, player2)
+        if player2.health <= 0:
+            finish(player1)
+            break
+        turn(player2, player1)
+        if player1.health <= 0:
+            finish(player2)
+            break
+
+
+p1 = Player(
+    name = data["PLAYER1"]["NAME"],
+    health = data["PLAYER1"]["STARTING_HEALTH"],
+    max_health = data["PLAYER1"]["STARTING_HEALTH"],
+    healingPotions = data["PLAYER1"]["ATTACKS"]["HEALING_POTIONS"]["AMOUNT"],
+    HealingPotionsName = data["PLAYER1"]["ATTACKS"]["HEALING_POTIONS"]["NAME"],
+    minions = data["PLAYER1"]["ATTACKS"]["MINIONS"]["AMOUNT"],
+    minionActive = False,
+    minionTurns =  data["PLAYER1"]["ATTACKS"]["MINIONS"]["TURNS"],
+    minionMaxTurns = data["PLAYER1"]["ATTACKS"]["MINIONS"]["TURNS"],
+    minionName = data["PLAYER1"]["ATTACKS"]["MINIONS"]["NAME"],
+    shieldTurns = 0,
+    shieldMaxTurns = data["PLAYER1"]["ATTACKS"]["SHIELDS"]["AMOUNT"],
+    shieldActive = False,
+    shieldDamage = data["PLAYER1"]["ATTACKS"]["SHIELDS"]["DIVIDE_DAMAGE"],
+    shields = data["PLAYER1"]["ATTACKS"]["SHIELDS"]["AMOUNT"],
+    shieldName = data["PLAYER1"]["ATTACKS"]["SHIELDS"]["NAME"]
+)
+
+p2 = Player(
+    name = data["PLAYER2"]["NAME"],
+    health = data["PLAYER2"]["STARTING_HEALTH"],
+    max_health = data["PLAYER2"]["STARTING_HEALTH"],
+    healingPotions = data["PLAYER2"]["ATTACKS"]["HEALING_POTIONS"]["AMOUNT"],
+    HealingPotionsName = data["PLAYER2"]["ATTACKS"]["HEALING_POTIONS"]["NAME"],
+    minions = data["PLAYER2"]["ATTACKS"]["MINIONS"]["AMOUNT"],
+    minionActive = False,
+    minionTurns =  data["PLAYER2"]["ATTACKS"]["MINIONS"]["TURNS"],
+    minionMaxTurns = data["PLAYER2"]["ATTACKS"]["MINIONS"]["TURNS"],
+    minionName = data["PLAYER2"]["ATTACKS"]["MINIONS"]["NAME"],
+    shieldTurns = 0,
+    shieldMaxTurns = data["PLAYER2"]["ATTACKS"]["SHIELDS"]["AMOUNT"],
+    shieldActive = False,
+    shieldDamage = data["PLAYER2"]["ATTACKS"]["SHIELDS"]["DIVIDE_DAMAGE"],
+    shields = data["PLAYER2"]["ATTACKS"]["SHIELDS"]["AMOUNT"],
+    shieldName = data["PLAYER2"]["ATTACKS"]["SHIELDS"]["NAME"]
+)
+
+start(p1, p2)
